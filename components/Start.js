@@ -27,9 +27,9 @@ const Start = ({ navigation }) => {
         placeholder='Type your username here'
       />
 
-      <View>
+      <View style={styles.colorSelect__container}>
         <Text>Choose your background colour:</Text>
-        <View>
+        <View style={styles.colorSelect__row}>
           <TouchableOpacity
             style={[styles.colorSelect__dot, { backgroundColor: dark }]}
             onPress={() => setColor(dark)}
@@ -72,6 +72,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginTop: 15,
     marginBottom: 15
+  },
+  colorSelect__container: {
+    alignItems: 'center',
+  },
+  colorSelect__row: {
+    flexDirection: 'row',
+    marginTop: 10,
+    marginBottom: 10,
   },
   colorSelect__dot: {
     width: 30,
