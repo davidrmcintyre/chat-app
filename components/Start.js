@@ -1,10 +1,13 @@
 import { useState } from 'react';
-import { StyleSheet, View, Text, Button, TextInput, ImageBackground, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, Button, TextInput, ImageBackground, TouchableOpacity, Alert } from 'react-native';
+import { getAuth, signInAnonymously } from 'firebase/auth';
 
 const Start = ({ navigation }) => {
   const [name, setName] = useState('');
   const [color, setColor] = useState('');
+  const auth = getAuth();
 
+  // Background colour choices
   const bgColors = {
     dark: '#090C08',
     lightgrey: '#8A95A5',
@@ -13,6 +16,23 @@ const Start = ({ navigation }) => {
   };
 
   const { dark, lightgrey, darkpurple, olive } = bgColors;
+    
+  // Function to sign in the user anonymously
+  const signInUser = () => {
+    signInAnonymously(auth)
+      .then((result) => {
+        // Navigate to the Chat screen with user ID, name, and color
+        navigation.navigate('Chat', {
+          uid: result.user.uid,
+          name: name,
+          backgroundColor: color ? color : 'white',
+        });
+        Alert.alert('Signed in successfully!');
+      })
+      .catch((error) => {
+        Alert.alert('Unable to sign in, try again later.');
+      });
+  };
 
   return (
     <ImageBackground
@@ -52,13 +72,13 @@ const Start = ({ navigation }) => {
         </View>
         <TouchableOpacity
           style={styles.chatButton}
-          onPress={() => navigation.navigate('Chat', { name: name, backgroundColor: color })}>
-        <Text style={styles.chatButton__text}>Go to Chat</Text>
+          onPress={signInUser}>
+          <Text style={styles.chatButton__text}>Start Chatting</Text>
         </TouchableOpacity>
       </View>
     </ImageBackground>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -88,14 +108,14 @@ const styles = StyleSheet.create({
     margin: 5,
   },
   chatButton: {
-    backgroundColor: "#757083",
-    justifyContent: "center",
-    width: "88%",
+    backgroundColor: '#757083',
+    justifyContent: 'center',
+    width: '88%',
     padding: 16,
   },
   chatButton__text: {
-    color: "#fff",
-    fontWeight: "600",
+    color: '#fff',
+    fontWeight: '600',
   },
 });
 
