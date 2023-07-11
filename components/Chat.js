@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { StyleSheet, View, Platform, KeyboardAvoidingView, Alert } from 'react-native';
-import { GiftedChat, Bubble } from 'react-native-gifted-chat';
+import { GiftedChat, Bubble, InputToolbar } from 'react-native-gifted-chat';
 import {
   addDoc,
   collection,
@@ -9,35 +9,70 @@ import {
   query,
 } from 'firebase/firestore';
 
-const Chat = ({ route, navigation, db }) => {
+// Async Storage
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+const Chat = ({ route, navigation, db, isConnected }) => {
   const { name, backgroundColor, uid } = route.params; // gets name, colour and User ID from route.params
   const [messages, setMessages] = useState([]); // sets message state
+
+  // function to load cached messages
+  const loadCachedMessages = async () => { 
+    const cachedMessages = (await AsyncStorage.getItem('messages')) || '[]';
+    setMessages(JSON.parse(cachedMessages));
+  };
+
+  let unsubMessages;
 
   useEffect(() => {
     // set navigation options for the title
     navigation.setOptions({ title: name });
 
+    if (isConnected === true) { // if a connection exists 
+      if (unsubMessages) unsubMessages();
+      unsubMessages = null;
+
     // Create a query to get the messages collection ordered by createdAt in descending order
     const q = query(collection(db, 'messages'), orderBy('createdAt', 'desc'));
-
-    // Subscribe to the query snapshot in real time
-    const unsubMessages = onSnapshot(q, (docs) => {
-      let newMessages = [];
-      docs.forEach((doc) => {
-        newMessages.push({
-          id: doc.id,
-          ...doc.data(),
-          createdAt: new Date(doc.data().createdAt.toMillis()),
+      unsubMessages = onSnapshot(q, (documentsSnapshot) => {
+        let newMessages = [];
+        documentsSnapshot.forEach((doc) => {
+          newMessages.push({
+            id: doc.id,
+            ...doc.data(),
+            createdAt: new Date(doc.data().createdAt.toMillis()), // convert createdAt to Date object })
+          });
         });
+        cachedMessages(newMessages);
+        setMessages(newMessages);
       });
-      setMessages(newMessages);
-    });
+    } else loadCachedMessages();
 
-    // Clean up the subscription when the component unmounts
+    // Clean up function
     return () => {
-      if (unsubMessages) unsubMessages();
+      if (unsubMessages) {
+        unsubMessages();
+      }
     };
-  }, []);
+  }, [isConnected]);
+
+
+  // function to cache messages
+  const cachedMessages = async (messagesToCache) => {
+    try {
+      await AsyncStorage.setItem('messages', JSON.stringify(messagesToCache));
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+
+    // renderInputToolbar function
+  const renderInputToolbar = (props) => {
+    if (isConnected) return <InputToolbar {...props} />;
+    else return null;
+  };
 
   const onSend = (newMessages) => {
     addDoc(collection(db, 'messages'), newMessages[0]);
@@ -77,6 +112,7 @@ const Chat = ({ route, navigation, db }) => {
           _id: uid,
           name: name,
         }}
+        renderInputToolbar={renderInputToolbar}
         placeholder="Type a message..."
       />
       {Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null}
