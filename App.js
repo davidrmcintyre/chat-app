@@ -19,6 +19,9 @@ import { useEffect } from "react";
 // Import Logbox and Alert
 import { LogBox, Alert } from "react-native";
 
+// Import getStorage from firebase
+import { getStorage } from "firebase/storage";
+
 // Create the navigator
 const Stack = createNativeStackNavigator();
 
@@ -42,6 +45,9 @@ const App = () => {
   // Initialize Cloud Firestore and get a reference to the service
   const db = getFirestore(app);
 
+
+  const storage = getStorage(app);
+
   useEffect(() => {
     if (connectionStatus.isConnected === false) {
       Alert.alert('Connection lost!'); // Alerts the user when the connection is lost
@@ -63,6 +69,7 @@ const App = () => {
             <Chat
               isConnected={connectionStatus.isConnected}
               db={db}
+              storage={storage}
               {...props}
             />
           )}

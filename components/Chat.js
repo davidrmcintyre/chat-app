@@ -8,12 +8,14 @@ import {
   orderBy,
   query,
 } from 'firebase/firestore';
+import CustomActions from './CustomActions';
+import MapView from 'react-native-maps';
 
 // Async Storage
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const Chat = ({ route, navigation, db, isConnected }) => {
+const Chat = ({ route, navigation, db, isConnected, storage }) => {
   const { name, backgroundColor, uid } = route.params; // gets name, colour and User ID from route.params
   const [messages, setMessages] = useState([]); // sets message state
 
@@ -67,11 +69,14 @@ const Chat = ({ route, navigation, db, isConnected }) => {
     }
   };
 
-
     // renderInputToolbar function
   const renderInputToolbar = (props) => {
     if (isConnected) return <InputToolbar {...props} />;
     else return null;
+  };
+
+  const renderCustomActions = (props) => {
+    return <CustomActions  storage={storage} {...props} />;
   };
 
   const onSend = (newMessages) => {
@@ -102,12 +107,35 @@ const Chat = ({ route, navigation, db, isConnected }) => {
     );
   };
 
+  const renderCustomView = (props) => {
+    const { currentMessage} = props;
+    if (currentMessage.location) {
+      return (
+          <MapView
+            style={{width: 150,
+              height: 100,
+              borderRadius: 13,
+              margin: 3}}
+            region={{
+              latitude: currentMessage.location.latitude,
+              longitude: currentMessage.location.longitude,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
+          />
+      );
+    }
+    return null;
+  }
+
   return (
     <View style={[styles.container, { backgroundColor: backgroundColor }]}>
       <GiftedChat
         messages={messages}
         renderBubble={renderBubble}
         onSend={onSend}
+        renderActions={renderCustomActions}
+        renderCustomView={renderCustomView}
         user={{
           _id: uid,
           name: name,
