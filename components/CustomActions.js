@@ -30,6 +30,7 @@ const CustomActions = ({wrapperStyle, iconTextStyle, onSend, storage, userID}) =
         );
       };
 
+    // function to store sent or taken images in the db
       const uploadAndSendImage = async (imageURI) => {
         const uniqueRefString = generateReference(imageURI);
         const newUploadRef = ref(storage, uniqueRefString);
@@ -41,6 +42,7 @@ const CustomActions = ({wrapperStyle, iconTextStyle, onSend, storage, userID}) =
         });
       }
     
+    // function to send an image from the users gallery
       const pickImage = async () => {
         let permissions = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (permissions?.granted) {
@@ -50,6 +52,7 @@ const CustomActions = ({wrapperStyle, iconTextStyle, onSend, storage, userID}) =
         }
       }
     
+    // functon to allow taking photos
       const takePhoto = async () => {
         let permissions = await ImagePicker.requestCameraPermissionsAsync();
         if (permissions?.granted) {
@@ -66,6 +69,7 @@ const CustomActions = ({wrapperStyle, iconTextStyle, onSend, storage, userID}) =
         return `${userID}-${timeStamp}-${imageName}`;
       }
 
+      // function to enable location sending
       const getLocation = async () => {
         let permissions = await Location.requestForegroundPermissionsAsync();
         if (permissions?.granted) {
