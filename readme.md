@@ -10,22 +10,6 @@ This repository contains the code for a simple chat app built using React Native
 
 3. **CustomActions**: This component provides custom actions for image and location sharing in the chat. It uses the @expo/react-native-action-sheet library for displaying an action sheet with options for choosing an image from the library, taking a picture, or sending the user's current location. The selected image or location is then uploaded to Firebase Storage and sent as a message.
 
-## Installation
-
-To run the app locally, follow these steps:
-
-1. Clone the repository:
-
-
-2. Install the dependencies:
-
-
-3. Start the Metro server:
-
-
-4. Run the app on a connected device or emulator:
-
-
 Dependencies:
 - **@react-navigation/native**: React Navigation library for screen navigation within the application.
 - **@react-navigation/native-stack**: Native stack navigator for React Navigation.
