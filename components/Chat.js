@@ -75,7 +75,6 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
     else return null;
   };
 
-  //function to render the custom actions (taking photos, location sharing etc)
   const renderCustomActions = (props) => {
     return <CustomActions  storage={storage} {...props} />;
   };
