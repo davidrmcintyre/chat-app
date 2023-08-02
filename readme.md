@@ -6,9 +6,15 @@ This repository contains the code for a simple chat app built using React Native
 
 1. **Start**: This component is responsible for the initial screen of the chat application where the user can enter their username and choose a background color. It utilizes the useState hook to manage the state of the input fields and background color. The component also handles anonymous user sign-in using Firebase authentication.
 
+![Start Screen](/img/start.jpg)
+
 2. **Chat**: This component represents the main chat screen of the application. It uses the GiftedChat component from the react-native-gifted-chat library to render and manage the chat messages. The component utilizes Firebase Firestore for real-time message synchronization and storage. It also includes custom actions for image and location sharing using Expo libraries.
 
+![Chat Screen](/img/login.jpg)
+
 3. **CustomActions**: This component provides custom actions for image and location sharing in the chat. It uses the @expo/react-native-action-sheet library for displaying an action sheet with options for choosing an image from the library, taking a picture, or sending the user's current location. The selected image or location is then uploaded to Firebase Storage and sent as a message.
+
+![Action Screen](/img/actions.jpg)
 
 Dependencies:
 - **@react-navigation/native**: React Navigation library for screen navigation within the application.
